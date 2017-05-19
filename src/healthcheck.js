@@ -37,7 +37,7 @@ function healthcheck(packageJSON, additonalMetrics = {}) {
 
     return (req, res) => {
         if (res.send) {
-            res.json(JSON.stringify(metrics(), null, 2));
+            res.json(metrics());
         } else {
             res(JSON.stringify(metrics(), null, 2));
         }
