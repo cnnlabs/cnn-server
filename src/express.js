@@ -43,9 +43,16 @@ function registerMiddleware(app, express, config, callback) {
     enableCompression && app.use(require('compression')());
     enableStatic && app.use(staticPath, express.static(staticDirectory));
 
-    middleware.forEach(({ path = '/', handler }) => {
-        log.important(`Registering middleware: ${path}`);
-        app.use.call(app, path, handler);
+    middleware.forEach(middleware => {
+        if (typeof middleware === 'function') {
+            log.important(`Registering middleware: ${middleware.name}`);
+            app.use.call(app, middleware);
+        } else {
+            const { path = '/', handler } = middleware;
+
+            log.important(`Registering middleware: ${path}`);
+            app.use.call(app, path, handler);
+        }
     });
 
     callback();
