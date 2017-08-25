@@ -1,6 +1,6 @@
 {
   "name": "cnn-server",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A simple, extendable server for CNN projects.",
   "license": "Apache-2.0",
   "private": true,
