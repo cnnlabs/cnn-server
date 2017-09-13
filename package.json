@@ -1,6 +1,6 @@
 {
   "name": "cnn-server",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "A simple, extendable server for CNN projects.",
   "license": "Apache-2.0",
   "private": true,
@@ -10,6 +10,6 @@
     "cnn-logger": "1.5.0",
     "compression": "1.6.2",
     "express": "4.15.2",
-    "hapi": "16.1.1"
+    "hapi": "16.6.0"
   }
 }
