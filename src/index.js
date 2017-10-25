@@ -19,9 +19,18 @@ class Server {
     this.config = config || defaultConfig;
     this.log = logger(this.config.logging);
     this.app = express();
+    if (this.config.messenger && this.config.messenger.amqp) {
+      const Messenger = require('cnn-messaging').AmqpMessenger;
+      this.messenger = new Messenger(this.config.messenger);
+      this.Message = require('cnn-messaging').Message;
+    }
     this.app.use((req, res, next) => {
       req.profile = { start: new Date() };
       req.log = this.log;
+      if (this.config.messenger && this.config.messenger.amqp) {
+         req.messenger = this.messenger;
+         req.Message = this.Message;
+      }
       next();
     });
     this.app.disable('x-powered-by');
@@ -48,9 +57,12 @@ class Server {
           reject(err);
         }
       });
-      this.service.listen(this.config.port, () => {
-        this.log.info(`Service started on port ${this.config.port}`);
-        resolve();
+      this.startMessenger()
+        .then(() => {
+          this.service.listen(this.config.port, () => {
+            this.log.info(`Service started on port ${this.config.port}`);
+            resolve();
+          });
       });
     });
   }
@@ -68,6 +80,19 @@ class Server {
         this.log.error(err);
         reject(err);
       }
+    });
+  }
+
+  async startMessenger() {
+    return new Promise((resolve, reject) => {
+      if (this.config.messenger && this.config.messenger.amqp) {
+        this.log.info('Starting cnn-messaging...');
+        return this.messenger.start()
+          .then(resolve)
+          .catch(reject);
+      }
+      this.log.warn('cnn-messaging not configured, skipping...');
+      return resolve();
     });
   }
 }

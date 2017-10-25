@@ -3,8 +3,9 @@
   "version": "0.4.0",
   "description": "A simple, extendable server for CNN projects.",
   "license": "Apache-2.0",
-  "private": true,
-  "author": "Matt Crutchfield <matt.crutchfield@turner.com>",
+  "contributors": [
+    "Ian Patton"
+  ],
   "main": "./src/index.js",
   "dependencies": {
     "cnn-logger": "1.5.0",
@@ -17,7 +18,7 @@
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",
     "eslint": "^4.9.0",
-    "istanbul": "^0.4.5",
+    "istanbul": "^1.1.0-alpha.1",
     "mocha": "^4.0.1",
     "sinon": "^4.0.1",
     "supertest": "^3.0.0"
@@ -26,7 +27,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "coverage": "istanbul cover _mocha -- --recursive test/"
   },
   "repository": {
     "type": "git",
@@ -35,5 +37,7 @@
   "bugs": {
     "url": "https://github.com/cnnlabs/cnn-server/issues"
   },
-  "homepage": "https://github.com/cnnlabs/cnn-server#readme"
+  "homepage": "https://github.com/cnnlabs/cnn-server#readme",
+  "author": "Matt Crutchfield <matt.crutchfield@turner.com>",
+  "engines": { "node" : ">=8.0" } }
 }
