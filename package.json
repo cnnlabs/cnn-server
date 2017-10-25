@@ -1,6 +1,6 @@
 {
   "name": "cnn-server",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A simple, extendable server for CNN projects.",
   "license": "Apache-2.0",
   "private": true,
@@ -8,8 +8,32 @@
   "main": "./src/index.js",
   "dependencies": {
     "cnn-logger": "1.5.0",
+    "cnn-messaging": "^3.0.0",
     "compression": "1.6.2",
     "express": "4.15.2",
-    "hapi": "16.6.0"
-  }
+    "express-request-id": "^1.4.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "coveralls": "^3.0.0",
+    "eslint": "^4.9.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^4.0.1",
+    "sinon": "^4.0.1",
+    "supertest": "^3.0.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cnnlabs/cnn-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cnnlabs/cnn-server/issues"
+  },
+  "homepage": "https://github.com/cnnlabs/cnn-server#readme"
 }
