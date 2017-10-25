@@ -9,7 +9,7 @@ CNN Server is an express server that is preconfigured with [CNN Messaging](https
 
 CNN Server is also a javascript class that can be extended to add additional functionality.
 
-Example:
+Example: Direct use
 
 ```
 const config = {
@@ -59,4 +59,27 @@ server.app.get('/', (req, res) => {
 
 // start and stop are both promises and support async/await
 server.start();
+```
+
+Example: Extending
+
+```
+const CNNServer = require('cnn-server');
+
+class MyServer extends CNNServer {
+    constructor(config) {
+        // call CNNServer constructor first
+        super(config);
+        // then add whatever you want
+        this.app.use(someMiddleware)
+    }
+
+    async start() {
+        // override start function, but call parent start function as needed
+        return SomeAsyncThing.start()
+          .then(() => {
+            return super.start();     
+          });
+    }
+}
 ```
