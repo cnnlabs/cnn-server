@@ -10,8 +10,7 @@
   "dependencies": {
     "cnn-logger": "1.5.0",
     "cnn-messaging": "^3.0.0",
-    "compression": "1.6.2",
-    "express": "4.15.2",
+    "express": "4.16.0",
     "express-request-id": "^1.4.0"
   },
   "devDependencies": {
@@ -40,6 +39,6 @@
   "homepage": "https://github.com/cnnlabs/cnn-server#readme",
   "author": "Matt Crutchfield <matt.crutchfield@turner.com>",
   "engines": {
-      "node": ">=8.0"
+    "node": ">=8.0"
   }
 }
