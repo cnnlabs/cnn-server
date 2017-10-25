@@ -33,7 +33,7 @@ const someMiddleware = require('some-middleware');
 
 server.app.use(someMiddleware) //use whatever middleware you like
 
-server.app.get('/', (req, res, next) => {
+server.app.get('/', (req, res) => {
     // requests have an id by default for tracing through multiple services (also set as header)
     // can access logger directly from request object (no global required)
     req.log.info(req.id);
@@ -54,9 +54,9 @@ server.app.get('/', (req, res, next) => {
 
     // can access instantiated messenger directly from req
     req.messenger.publish(message);
-    next();   
+    res.send('hello world');  
 });
 
 // start and stop are both promises and support async/await
-return server.start();
+server.start();
 ```
