@@ -73,7 +73,9 @@ class Server {
         this.service.close(() => {
           this.service = null;
           this.log.info(`Service no longer listening on port ${this.config.port}`);
-          return resolve();
+          return this.stopMessenger()
+            .then(resolve)
+            .catch(reject);
         });
       } else {
         const err = new Error('Service not started');
@@ -92,6 +94,18 @@ class Server {
           .catch(reject);
       }
       this.log.warn('cnn-messaging not configured, skipping...');
+      return resolve();
+    });
+  }
+
+  async stopMessenger() {
+    return new Promise((resolve, reject) => {
+      if (this.config.messenger && this.config.messenger.amqp) {
+        this.log.info('Stopping cnn-messaging...');
+        return this.messenger.stop()
+          .then(resolve)
+          .catch(reject);
+      }
       return resolve();
     });
   }
