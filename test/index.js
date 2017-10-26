@@ -53,7 +53,7 @@ describe('cnn-server start and stop', function() {
 
 });
 
-describe('cnn-server features', function() {
+describe('cnn-logger integration', function() {
   const server = new Server({
     port: 5050,
     logging: {
@@ -84,5 +84,34 @@ describe('cnn-server features', function() {
       .then((res) => {
         server.log.info.calledWith(`Request: ${res.headers['x-request-id']} GET /`).should.be.true;
       });
+  });
+});
+
+describe('cnn-messaging integration', function() {
+  const server = new Server({
+    port: 5050,
+    logging: {
+      console: {
+        logLevel: 'important'
+      }
+    },
+    messenger: {
+      amqp: {
+        connectionString: 'amqp://localhost:5672',
+        exchangeName: 'MOCHA_TEST'
+      }
+    }
+  });
+
+  before(() => {
+    return server.start();
+  });
+
+  after(() => {
+    return server.stop();
+  });
+
+  it('should have a messenger and Message property', function() {
+     server.messenger.should.exist;
   });
 });

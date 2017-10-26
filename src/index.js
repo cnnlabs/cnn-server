@@ -19,11 +19,6 @@ class Server {
     this.config = config || defaultConfig;
     this.log = logger(this.config.logging);
     this.app = express();
-    if (this.config.messenger && this.config.messenger.amqp) {
-      const Messenger = require('cnn-messaging').AmqpMessenger;
-      this.messenger = new Messenger(this.config.messenger);
-      this.Message = require('cnn-messaging').Message;
-    }
     this.app.use((req, res, next) => {
       req.profile = { start: new Date() };
       req.log = this.log;
@@ -50,6 +45,12 @@ class Server {
           this.log.warn(`Current NODE_ENV "${process.env.NODE_ENV}" !== "production". Performance will be degraded.`);
       }
       this.service = http.createServer(this.app);
+      if (this.config.messenger && this.config.messenger.amqp) {
+        this.config.messenger.http = this.service;
+        const Messenger = require('cnn-messaging').AmqpMessenger;
+        this.messenger = new Messenger(this.config.messenger);
+        this.Message = require('cnn-messaging').Message;
+      }
       this.service.once('error', (err) => {
         if (err.errno === 'EADDRINUSE') {
           this.service = null;
