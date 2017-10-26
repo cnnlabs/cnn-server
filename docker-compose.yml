@@ -1,0 +1,6 @@
+version: '2'
+services:
+  amqp:
+    image: rabbitmq:latest
+    ports:
+        - "5672:5672"
