@@ -46,7 +46,9 @@ class Server {
       }
       this.service = http.createServer(this.app);
       if (this.config.messenger && this.config.messenger.amqp) {
-        this.config.messenger.http = this.service;
+        if (this.config.messenger.enableWebsockets) {
+            this.config.messenger.http = this.service;
+        }
         const Messenger = require('cnn-messaging').AmqpMessenger;
         this.messenger = new Messenger(this.config.messenger);
         this.Message = require('cnn-messaging').Message;

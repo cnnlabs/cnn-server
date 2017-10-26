@@ -23,7 +23,8 @@ const config = {
     amqp: {
       connectionString: 'amqp://localhost:5672',
       exchangeName: 'MOCHA_TEST'
-    }
+    },
+    enableWebsockets: true
   }
 };
 const Server = require('cnn-server');

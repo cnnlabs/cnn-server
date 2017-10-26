@@ -99,7 +99,8 @@ describe('cnn-messaging integration', function() {
       amqp: {
         connectionString: 'amqp://localhost:5672',
         exchangeName: 'MOCHA_TEST'
-      }
+      },
+      enableWebsockets: true
     }
   });
 
