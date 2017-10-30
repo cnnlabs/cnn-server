@@ -37,6 +37,7 @@ function registerMiddleware(app, express, config, callback) {
       enableCompression,
       enableStatic,
       staticPath,
+      staticMaxAge,
       staticDirectory
     } = config;
 
@@ -52,7 +53,11 @@ function registerMiddleware(app, express, config, callback) {
     });
 
     enableCompression && app.use(require('compression')());
-    enableStatic && app.use(staticPath, express.static(staticDirectory));
+
+    if (enableStatic) {
+        const config = { maxAge: staticMaxAge || 0 };
+        app.use(staticPath, express.static(staticDirectory, config));
+    }
 
     callback();
 }
