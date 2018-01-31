@@ -24,14 +24,10 @@ function healthcheck(packageJSON, additonalMetrics = {}) {
         return Object.assign({}, {
             name: packageJSON.name,
             versionPackage: packageJSON.version,
-            versionNodeJS: process.version,
             epochMS: now.getTime(),
             utcDate: now.toUTCString(),
-            platform: process.platform,
             memoryUsage: process.memoryUsage(),
-            uptime: process.uptime(), // uptime is in seconds
-            // @TODO: Probably best not to throw the whole ENV in here.
-            env: process.env
+            uptime: process.uptime() // uptime is in seconds
         }, additonalMetrics);
     };
 
