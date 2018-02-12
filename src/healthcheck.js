@@ -1,4 +1,3 @@
-const process = require('process');
 const { resolve } = require('path');
 
 /**
@@ -20,14 +19,9 @@ function healthcheck(packageJSON, additonalMetrics = {}) {
     }
 
     function metrics() {
-        const now = new Date();
         return Object.assign({}, {
             name: packageJSON.name,
-            versionPackage: packageJSON.version,
-            epochMS: now.getTime(),
-            utcDate: now.toUTCString(),
-            memoryUsage: process.memoryUsage(),
-            uptime: process.uptime() // uptime is in seconds
+            versionPackage: packageJSON.version
         }, additonalMetrics);
     };
 

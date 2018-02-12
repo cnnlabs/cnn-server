@@ -7,11 +7,6 @@ const config = {
     enableStatic: false,
     staticPath: '/static',
     staticDirectory: './dist',
-    logging: {
-        console: {
-            logLevel: 'error'
-        }
-    },
     middleware: [],
     routes: []
 };
