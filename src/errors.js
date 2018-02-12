@@ -8,7 +8,7 @@ function handleNoMatch(req, res, next) {
 function handleError(err, req, res, next) {
     const code = err.statusCode || 500;
     const message = err.message || 'Here be dragons.';
-    log.fatal(`Sent error ${code} response for URI ${req.url}`);
+    log.error(`Sent error ${code} response for URI ${req.url}`);
     res.status(code).send(message);
 }
 
