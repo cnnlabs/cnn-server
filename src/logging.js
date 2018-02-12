@@ -1,16 +1,25 @@
 const debug = require('debug')('cnn-server:logger');
 
+function generateTags(LOGZIO_TAGS) {
+    if (!LOGZIO_TAGS) {
+        console.error('No LOGZIO_TAGS have been defined.');
+        return null;
+    }
+    return LOGZIO_TAGS.split(',').map(i => i.trim()).filter(Boolean)
+}
+
 const log = require('cnn-logger')(process.env.LOGZIO_TOKEN ? {
     console: {
         logLevel: (process.env.KUBERNETES_PORT ? 'fatal' : (process.env.CONSOLE_LOG_LEVEL || process.env.LOG_LEVEL))
     },
     logzio: {
-        tags: [
-            process.env.PRODUCT && process.env.PRODUCT,
-            process.env.ENVIRONMENT && process.env.ENVIRONTMENT.toLowerCase() + '-env'
-        ]
+        tags: generateTags(process.env.LOGZIO_TAGS)
     }
 } : {});
+
+if (process.env.LOGZIO_TOKEN && !process.env.LOGZIO_TAGS) {
+    log.important('process.env.LOGZIO_TAGS is not defined, your logs will not be sent to logz.io. See cnn-server README.');
+}
 
 debug(`Initializing Logging subsystem... LOG_LEVEL="${process.env.LOG_LEVEL}", CONSOLE_LOG_LEVEL="${process.env.CONSOLE_LOG_LEVEL}"`);
 
