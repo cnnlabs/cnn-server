@@ -11,7 +11,7 @@ function start(app, config) {
     if (process.env.ENABLE_CLUSTER && cluster.isMaster) {
         os.cpus().forEach(c => cluster.fork());
         cluster.on('exit', function fork(worker) {
-            log.fatal(`Worker ${worker.id} died.`);
+            log.fatal(`Worker ${worker.id} died. Starting a new one.`);
             cluster.fork();
         });
     } else {
