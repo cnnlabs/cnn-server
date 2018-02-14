@@ -1,15 +1,28 @@
+const os = require('os');
+const cluster = require('cluster');
+const http = require('http');
+const express = require('express');
+const debug = require('debug')('cnn-server:express');
+const compression = require('compression');
+const { healthcheckRoute } = require('./healthcheck.js');
+const { handleNoMatch, handleError } = require('./errors.js');
+
 function start(app, config) {
-    const { port } = config;
-    const http = require('http');
-    http.createServer(app).listen(port, () => {
-        log.important(`Service started on port: ${port}`);
-    });
-    // @TODO: Add error check
-    // @TODO: Add support for https
+    if (process.env.ENABLE_CLUSTER && cluster.isMaster) {
+        os.cpus().forEach(c => cluster.fork());
+        cluster.on('exit', function fork(worker) {
+            log.fatal(`Worker ${worker.id} died. Starting a new one.`);
+            cluster.fork();
+        });
+    } else {
+        const { port } = config;
+        http.createServer(app).listen(port, function start() {
+            log.important(`Service started on port: ${port}`);
+        });
+    }
 }
 
 function handleErrors(app, callback) {
-    const { handleNoMatch, handleError } = require('./errors.js');
     // Default route to 404 unmatched things.
     app.all('*', handleNoMatch);
     // Error handler
@@ -18,13 +31,12 @@ function handleErrors(app, callback) {
 }
 
 function registerRoutes(app, { routes : r }, callback) {
-    const { healthcheckRoute } = require('./healthcheck.js');
     const routes = r.slice();
 
     routes.unshift(healthcheckRoute);
 
     routes.forEach(({ method = 'get', path, handler }) => {
-        log.info(`Registering route: path: ${path}, method: ${method}`);
+        debug(`Registering route: path: ${path}, method: ${method}`);
         app[method.toLowerCase()].call(app, path, handler);
     });
 
@@ -42,16 +54,16 @@ function registerMiddleware(app, express, config, callback) {
 
     middleware.forEach(middleware => {
         if (typeof middleware === 'function') {
-            log.important(`Registering middleware: ${middleware.name}`);
+            debug(`Registering middleware: ${middleware.name}`);
             app.use.call(app, middleware);
         } else {
             const { path = '/', handler } = middleware;
-            log.important(`Registering middleware: ${path}`);
+            debug(`Registering middleware: ${path}`);
             app.use.call(app, path, handler);
         }
     });
 
-    enableCompression && app.use(require('compression')());
+    enableCompression && app.use(compression());
     enableStatic && app.use(staticPath, express.static(staticDirectory));
 
     callback();
@@ -63,12 +75,8 @@ function handleEscapeHatch(escapeHatch, app, express, callback) {
 }
 
 function server(config, escapeHatch = null) {
-
-    const express = require('express');
     const app = express();
-
     app.disable('x-powered-by');
-
     const step5 = start.bind(null, app, config);
     const step4 = handleErrors.bind(null, app, step5);
     const step3 = registerRoutes.bind(null, app, config, step4);

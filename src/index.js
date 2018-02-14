@@ -1,15 +1,22 @@
+global.log = require('./logging.js');
+const debug = require('debug')('cnn-server:init');
+const checkNodeEnvironment = require('./check-node-environment.js');
+
 function server(appConfig, escapeHatch = null) {
     const baseConfig = require('./config.js');
     const config = Object.assign({}, baseConfig, appConfig);
-    const log = global.log = require('./logging.js')(config.logging);
 
-    require('./check-node-environment.js')();
+    debug('merged configuration: ', config);
+
+    checkNodeEnvironment();
 
     switch (config.framework) {
         case 'hapi':
+            debug('Using Hapi framework');
             require('./hapi.js')(config, escapeHatch);
             break;
         case 'express':
+            debug('Using Express framework');
             require('./express.js')(config, escapeHatch);
             break;
         default:

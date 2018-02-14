@@ -1,6 +1,7 @@
 const HttpError = require('./http-error.js');
 
 function handleNoMatch(req, res, next) {
+    log.error(`Hit handleNoMatch middleware for ${req.url}`);
     next(new HttpError(`No match found for ${req.url}.`, 404));
 }
 
