@@ -8,7 +8,7 @@ const { healthcheckRoute } = require('./healthcheck.js');
 const { handleNoMatch, handleError } = require('./errors.js');
 
 function start(app, config) {
-    if (process.env.ENABLE_CLUSTER && cluster.isMaster) {
+    if (String(process.env.ENABLE_CLUSTER).toLowerCase() === 'true' && cluster.isMaster) {
         os.cpus().forEach(c => cluster.fork());
         cluster.on('exit', function fork(worker) {
             log.fatal(`Worker ${worker.id} died. Starting a new one.`);
