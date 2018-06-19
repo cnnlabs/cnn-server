@@ -1,7 +1,12 @@
-function start(app, { port, hostname }) {
+function notifySuccess(app, callback) {
+    callback && callback(null, { app });
+}
+
+function start(app, { port, hostname }, callback) {
     app.start((err) => {
         if (err) { throw err; }
         log.important(`Service started on port: ${port}`);
+        callback();
     });
 }
 
@@ -21,44 +26,37 @@ function registerRoutes(app, { routes : r }, callback) {
 
 function registerPlugins(app, { plugins : p }, callback) {
     const plugins = p.slice();
+    const promises = [];
 
     plugins.forEach(({ register, options },index,array) => {
         let pluginName =
           (register.register.attributes.pkg !== undefined) ? register.register.attributes.pkg.name : register.register.attributes.name;
         log.info(`Registering plugin: ${pluginName}`);
-
-        if (index === (array.length-1)) {
-          app.register({ register : register, options : options},(err) => {
-            if (err) {
-              log.error('Failed to load plugin:', err);
-
-              throw err;
-            }
-
-            callback();
-          });
-        }
-        else {
-          app.register({ register : register, options : options}, (err) => {
-            if (err) {
-              log.error('Failed to load plugin:', err);
-
-              throw err;
-            }
-          });
-        }
+        // In hapi 16, calling register without a callback will return a promise
+        // In hapi 17, this is not true
+        promises.push(app.register({ register : register, options : options}));
     });
+
+    Promise.all(promises)
+        .then(() => {
+            callback();
+        })
+        .catch((err) => {
+            log.error('Failed to load plugin: ', err);
+            throw err;
+        });
 }
 
-function server(config, escapeHatch = null) {
+function server(config, escapeHatch = null, callback = null) {
 
     const Hapi = require('hapi');
     const app = new Hapi.Server();
 
     app.connection({ port: config.port, host: config.hostname });
 
-    const step3 = start.bind(null, app, config);
-    const step2 = registerPlugins.bind(null,app, config, step3);
+    const step4 = notifySuccess.bind(null, app, callback);
+    const step3 = start.bind(null, app, config, step4);
+    const step2 = registerPlugins.bind(null, app, config, step3);
     const step1 = registerRoutes.bind(null, app, config, step2);
 
     step1();

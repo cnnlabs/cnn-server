@@ -7,17 +7,23 @@ const compression = require('compression');
 const { healthcheckRoute } = require('./healthcheck.js');
 const { handleNoMatch, handleError } = require('./errors.js');
 
-function start(app, config) {
+function notifySuccess(app, callback) {
+  callback && callback(null, { app });
+}
+
+function start(app, config, callback) {
     if (String(process.env.ENABLE_CLUSTER).toLowerCase() === 'true' && cluster.isMaster) {
         os.cpus().forEach(c => cluster.fork());
         cluster.on('exit', function fork(worker) {
             log.fatal(`Worker ${worker.id} died. Starting a new one.`);
             cluster.fork();
         });
+        callback();
     } else {
         const { port } = config;
         http.createServer(app).listen(port, function start() {
             log.important(`Service started on port: ${port}`);
+            callback();
         });
     }
 }
@@ -74,10 +80,11 @@ function handleEscapeHatch(escapeHatch, app, express, callback) {
     callback();
 }
 
-function server(config, escapeHatch = null) {
+function server(config, escapeHatch = null, callback = null) {
     const app = express();
     app.disable('x-powered-by');
-    const step5 = start.bind(null, app, config);
+    const step6 = notifySuccess.bind(null, app, callback);
+    const step5 = start.bind(null, app, config, step6);
     const step4 = handleErrors.bind(null, app, step5);
     const step3 = registerRoutes.bind(null, app, config, step4);
     const step2 = registerMiddleware.bind(null, app, express, config, step3);
