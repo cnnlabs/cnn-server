@@ -19,9 +19,12 @@ function registerRoutes(app, { routes : r }, callback) {
     callback();
 }
 
-function registerPlugins(app, { plugins : p }, callback) {
+function registerPlugins(app, { plugins : p = [] }, callback) {
     const plugins = p.slice();
 
+    if (!plugins.length) {
+      callback();
+    }
     plugins.forEach(({ register, options },index,array) => {
         let pluginName =
           (register.register.attributes.pkg !== undefined) ? register.register.attributes.pkg.name : register.register.attributes.name;
