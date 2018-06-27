@@ -8,7 +8,7 @@ const { healthcheckRoute } = require('./healthcheck.js');
 const { handleNoMatch, handleError } = require('./errors.js');
 
 function notifySuccess(app, callback) {
-  callback && callback(null, { app });
+  typeof callback === 'function' && callback(null, { app });
 }
 
 function start(app, config, callback) {
