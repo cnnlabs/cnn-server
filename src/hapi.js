@@ -1,5 +1,5 @@
 function notifySuccess(app, callback) {
-    callback && callback(null, { app });
+    typeof callback === 'function' && callback(null, { app });
 }
 
 function start(app, { port, hostname }, callback) {
