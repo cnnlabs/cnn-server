@@ -54,8 +54,13 @@ function server(config, escapeHatch = null) {
 
     const Hapi = require('hapi');
     const app = new Hapi.Server();
+    let http = require('http');
 
-    app.connection({ port: config.port, host: config.hostname });
+    if(String(process.env.ENABLE_HTTP2).toLowerCase() === 'true') {
+        http = require('http2');
+    }
+
+    app.connection({ port: config.port, host: config.hostname, listener: http.createServer() });
 
     const step3 = start.bind(null, app, config);
     const step2 = registerPlugins.bind(null,app, config, step3);

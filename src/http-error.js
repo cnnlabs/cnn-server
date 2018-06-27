@@ -1,4 +1,8 @@
-const errorCodes = require('http').STATUS_CODES;
+let errorCodes = require('http').STATUS_CODES;
+
+if(String(process.env.ENABLE_HTTP2).toLowerCase() === 'true') {
+    errorCodes = require('http2').STATUS_CODES;
+}
 
 /**
  * Utility function to return default error text for a specific error code

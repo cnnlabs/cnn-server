@@ -1,11 +1,12 @@
 const os = require('os');
 const cluster = require('cluster');
-const http = require('http');
 const express = require('express');
 const debug = require('debug')('cnn-server:express');
 const compression = require('compression');
 const { healthcheckRoute } = require('./healthcheck.js');
 const { handleNoMatch, handleError } = require('./errors.js');
+
+let http = require('http');
 
 function start(app, config) {
     if (String(process.env.ENABLE_CLUSTER).toLowerCase() === 'true' && cluster.isMaster) {
@@ -16,9 +17,15 @@ function start(app, config) {
         });
     } else {
         const { port } = config;
+        if(String(process.env.ENABLE_HTTP2).toLowerCase() === 'true') {
+            const http2 = require('http2');
+            http = http2;
+        }
         http.createServer(app).listen(port, function start() {
             log.important(`Service started on port: ${port}`);
         });
+
+
     }
 }
 
