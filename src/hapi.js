@@ -16,9 +16,9 @@ function registerRoutes(app, { routes : r }, callback) {
 
     routes.unshift(healthcheckRoute);
 
-    routes.forEach(({ method = 'GET', path, handler }) => {
+    routes.forEach(({ method = 'GET', path, ...rest }) => {
         log.info(`Registering route: path: ${path}, method: ${method}`);
-        app.route({ method: method.toUpperCase(), path, handler })
+        app.route({ method: method.toUpperCase(), path, ...rest })
     });
 
     callback();
