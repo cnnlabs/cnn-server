@@ -36,7 +36,10 @@ function healthcheck(packageJSON, additonalMetrics = {}) {
 
 const healthcheckRoute = {
     path: '/_healthcheck',
-    handler: healthcheck(require(resolve(process.cwd(), 'package.json')))
+    handler: healthcheck(require(resolve(process.cwd(), 'package.json'))),
+    config: {
+      auth: false
+    }
 };
 
 module.exports = {
