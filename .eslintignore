@@ -1,0 +1,5 @@
+coverage
+docs
+node-modules
+test/mocks/*
+example.js
